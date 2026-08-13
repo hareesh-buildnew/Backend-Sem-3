@@ -9,7 +9,7 @@ console.log(fs.readFileSync("welcome.txt","utf-8"));
 //Question 3
 fs.writeFileSync("task.txt","Task 1: Learn Node")
 fs.appendFileSync("task.txt","\nTask 2: Learn fs module")
-console.log(fs.readFileSync("task.txt"))
+console.log(fs.readFileSync("task.txt","utf-8"))
 
 //Question 4
 fs.writeFileSync("demo.txt","AAA")
@@ -21,3 +21,15 @@ fs.appendFileSync("demo.txt","CCC") //Adds data
 // fs.mkdirSync("myProject")
 fs.writeFileSync("myProject/info.txt","This is inside the folder")
 console.log(fs.readdirSync("myProject","utf-8"))
+
+//SECTION C
+//Question 6
+console.log("1. Start")
+fs.readFile("welcome.txt","utf-8",(e,data)=>{
+    console.log(data)
+})
+// fs.mkdirSync("data")
+fs.writeFileSync("data/notes.txt","Note 1: Backend is fun")
+fs.appendFileSync("data/notes.txt","Note 2: fs module learned\nNote 3: CRUD done")
+console.log(fs.readFileSync("data/notes.txt","utf-8"));
+// fs.rmSync("data",{ recursive: true })
