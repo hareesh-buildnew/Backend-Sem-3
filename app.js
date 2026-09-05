@@ -48,27 +48,50 @@ app.post('/login', async(req,res)=>{
   let token=    jwt.sign({email:findData.email,role:findData.role},"hehehehehe")
   console.log(token,"hehe");
 
-  
-
-
  
  res.json({msg:"done",token:token})
 
 })
+
 let auth=(req,res,next)=>{
-   let token=req.headers.authorization;
-   console.log(token,"toeknn");
-   
-   if(!token){
-      return res.send("kaun hai app...")
-   }
+  let token=req.headers.authorization;
+  console.log(token,"tokenn");
+  
+  if(!token){
+    return res.send("kaun hai app...")
+  }
   let decode=  jwt.verify(token,"hehehehehe")
   console.log(decode,"isse");
+  req.user=decode;
   next()
 }
 
 
-app.get("/api",auth,(req,res)=>{
+// Lec 8
+
+
+let roleCheck=(role)=>{
+  return (req,res,next)=>{
+    if(req.user.role!=role){
+      return res.send("who are u.....")
+    }
+    next()
+  }
+
+}
+app.get('/admin',auth,roleCheck('admin'),(req,res)=>{
+   let role=auth()
+   console.log("ROLE:",role);
+   if(role=='admin'){
+    res.send("MAi admin huu....")
+   }
+   else{
+    res.send("Kaun ho tum")
+   }
+   next()
+})
+
+app.get("/api",auth,roleCheck('admin'),(req,res)=>{
    res.send("heheh")
 
 })
