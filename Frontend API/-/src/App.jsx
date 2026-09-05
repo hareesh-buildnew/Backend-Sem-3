@@ -5,8 +5,14 @@ const App = () => {
     name: "",
     email: "",
     passWord: "",
+    role: ""
   });
-  useEffect(() => {}, []);
+  function fun1(e){
+      console.log(e.target);
+      let {name,value}=    e.target
+      SetData({...data,[name]:value})
+      console.log(data,"datata");
+  }
   async function done() {
     let apiR = await axios.post("http://localhost:3000/signUp", data);
     console.log(apiR, "heheheeh");
@@ -14,6 +20,7 @@ const App = () => {
   return (
     <div>
       <input placeholder="Enter name" onChange={fun1} />
+      <input placeholder="Enter email" />
     </div>
   );
 };
