@@ -1,6 +1,8 @@
 let express = require("express");
 let app = express();
-let cors=require('cors')
+let router=express.Router();
+const crypto = require('crypto');
+let cors=require('cors');
 let jwt = require('jsonwebtoken')
 let mongoose = require("mongoose");
 let bcryptjs = require("bcryptjs");
@@ -93,12 +95,35 @@ app.get('/admin',auth,roleCheck('admin'),(req,res)=>{
 
 app.get("/api",auth,roleCheck('admin'),(req,res)=>{
    res.send("heheh")
-
 })
 
-
-
-
+app.post('/forgot-password', async (req, res) => {
+   const { email } = req.body;
+   try {
+     const user = await User.findOne({ email });
+     if (!user) {
+       return res.status(404).send('User not found');
+     }
+ 
+   
+     const resetToken = crypto.randomBytes(20).toString('hex');
+     user.resetToken = resetToken;
+     user.resetTokenExpiry = Date.now() + 3600000; 
+     await user.save();
+ 
+ 
+     const resetUrl = `${req.protocol}://${req.get('host')}/api/reset-password/${resetToken}`;
+     await sendEmail(
+       user.email,
+       'Password Reset Request',
+       `Click the link below to reset your password:\n\n${resetUrl}`
+     );
+ 
+     res.status(200).send('Password reset email sent');
+   } catch (error) {
+     res.status(500).send('Error sending password reset email: ' + error.message);
+   }
+ });
 
 
 
