@@ -7,6 +7,7 @@ let jwt = require('jsonwebtoken')
 let mongoose = require("mongoose");
 let bcryptjs = require("bcryptjs");
 const User = require("./db/db.js");
+let {sendEmail} = require('./utils/sendMail.js')
 mongoose.connect("mongodb://127.0.0.1:27017/db").then(() => {
   console.log("db....");
 });
@@ -126,9 +127,25 @@ app.post('/forgot-password', async (req, res) => {
  });
 
 
-
-
-
+app.post('/reset-password/:token',async (req,res) => {
+  let newP=req.body;
+  let {token} = req.params
+  let user=await User.findOne({
+    resetToken:token,
+    resetTokenExpiry:({$gt: Date.now()})
+  })
+  if(!user){
+    return res.send("invalid...")
+  }
+  else{
+    let updateP = await bcryptjs.hash(newP,10)
+    user.passWord=updateP
+    user.resetToken=undefined
+    user.resetTokenExpiry=undefined
+    await user.save()
+    res.send("completed")
+  }
+})
 
 
 
